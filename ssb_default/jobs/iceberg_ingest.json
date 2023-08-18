@@ -1,0 +1,41 @@
+{
+  "job_name" : "iceberg_ingest",
+  "api_endpoints" : [ ],
+  "sql" : "INSERT INTO `ssb`.`ssb_default`.`main_network_triage_output` \n  select `message`.`id` \n, cast(substr(cast(`message`.`ts` as string), 1, 10) as int) as `ts`\n, `message`.`extensions`['ip_src_addr.geo.longitude'] as ip_src_addr_geo_lon\n, cast(`message`.`extensions`['code'] as int) as code\n, `message`.`extensions`['method'] as `method`\n, `message`.`extensions`['top_level_domain'] as top_level_domain\n, `message`.`extensions`['ip_dst_addr.geo.longitude'] as ip_dst_addr_geo_lon\n, `message`.`extensions`['ip_dst_addr.geo.city'] as ip_dst_addr_geo_city\n, `message`.`extensions`['ip_dst_addr.asn.org'] as ip_dst_addr_asn_org\n, `message`.`extensions`['url'] as host_url\n, `message`.`extensions`['second_level_domain'] as second_level_domain\n, `message`.`extensions`['ip_dst_addr.asn.mask'] as ip_dst_addr_asn_mask\n, `message`.`extensions`['elapsed'] as elapsed\n, `message`.`extensions`['ip_dst_addr.asn.number'] as ip_dst_addr_asn_number\n, `message`.`extensions`['ip_src_addr.geo.country'] as ip_src_addr_geo_country\n, `message`.`extensions`['ip_dst_addr'] as ip_dst_addr\n, `message`.`extensions`['ip_dst_addr.geo.country'] as ip_dst_addr_geo_country\n, `message`.`extensions`['ip_dst_addr.geo.latitude'] as ip_dst_addr_geo_lat\n, `message`.`extensions`['ip_src_addr.geo.latitude'] as ip_src_addr_geo_lat\n, `message`.`extensions`['bytes'] as message_bytes\n, `message`.`extensions`['domain'] as domain\n, `message`.`extensions`['action'] as action\n, `message`.`extensions`['ip_src_addr'] as ip_src_addr\n, `message`.`extensions`['dga_model.legit'] as dga_model_legit\n, `message`.`extensions`['domain_no_subdomains'] as domain_no_subdomains\n, `message`.`extensions`['ip_dst_addr.geo.state'] as ip_dst_addr_geo_state\n, `cyberScoresDetails`[1].`ruleId` as cyberscore_rule1_id\n, `cyberScoresDetails`[1].`score` as cyberscore_rule1_score\n, `cyberScoresDetails`[1].`reason` as cyberscore_rule1_reason\n, `cyberScoresDetails`[2].`ruleId` as cyberscore_rule2_id\n, `cyberScoresDetails`[2].`score` as cyberscore_rule2_score\n, `cyberScoresDetails`[2].`reason` as cyberscore_rule2_reason\nfrom `cybersec-sr`.`default_database`.`main.network.triage.output` \n\n/*\nCREATE TABLE `ssb`.`ssb_default`.`main_network_triage_output` (\n`id` string \n, `ts` int\n, `ip_src_addr_geo_lon` string\n, `code` int\n, `method` string\n, `top_level_domain` string\n, `ip_dst_addr_geo_lon` string\n, `ip_dst_addr_geo_city` string\n, `ip_dst_addr_asn_org` string\n, `host_url` string\n, `second_level_domain` string\n, `ip_dst_addr_asn_mask` string\n, `elapsed` string\n, `ip_dst_addr_asn_number` string\n, `ip_src_addr_geo_country` string\n, `ip_dst_addr` string\n, `ip_dst_addr_geo_country` string\n, `ip_dst_addr_geo_lat` string\n, `ip_src_addr_geo_lat` string\n, `message_bytes` string\n, `domain` string\n, `action` string\n, `ip_src_addr` string\n, `dga_model_legit` string\n, `domain_no_subdomains` string\n, `ip_dst_addr_geo_state` string\n, `cyberscore_rule1_id` string\n, `cyberscore_rule1_score` double\n, `cyberscore_rule1_reason` string\n, `cyberscore_rule2_id` string\n, `cyberscore_rule2_score` double\n, `cyberscore_rule2_reason` string\n) WITH (\n  'catalog-database' = 'cybersec',\n  'catalog-name' = 'cybersec-hive',\n  'hive-conf-dir' = '/etc/hive/conf',\n  'connector' = 'iceberg',\n  'catalog-type' = 'hive'\n)\n*/",
+  "mv_config" : {
+    "name" : "iceberg_ingest",
+    "retention" : 300,
+    "min_row_retention_count" : 0,
+    "recreate" : false,
+    "key_column_name" : null,
+    "column_indices_disabled" : false,
+    "indexed_columns" : [ ],
+    "not_indexed_columns" : [ ],
+    "api_key" : null,
+    "ignore_nulls" : false,
+    "require_restart" : false,
+    "batch_size" : 0,
+    "enabled" : false
+  },
+  "checkpoint_config" : {
+    "enable_checkpointing" : true,
+    "checkpoint_interval_millis" : 600000,
+    "checkpoint_timeout_millis" : 60000,
+    "tolerable_checkpoint_failures" : 2,
+    "checkpoint_mode" : "AT_LEAST_ONCE",
+    "restart_strategy" : "exponential_delay",
+    "exponential_backoff_delay_max_seconds" : 60
+  },
+  "runtime_config" : {
+    "execution_mode" : "SESSION",
+    "parallelism" : 1,
+    "sample_interval" : 1000,
+    "sample_count" : 100,
+    "window_size" : 100,
+    "start_with_savepoint" : false,
+    "log_config" : {
+      "type" : "LOG4J_PROPERTIES",
+      "content" : "\nrootLogger.level = INFO\nrootLogger.appenderRef.file.ref = MainAppender\n#Uncomment this if you want to _only_ change Flink's logging\n#logger.flink.name = org.apache.flink\n#logger.flink.level = INFO\n\n# The following lines keep the log level of common libraries/connectors on\n# log level INFO. The root logger does not override this. You have to manually\n# change the log levels here.\nlogger.akka.name = akka\nlogger.akka.level = INFO\nlogger.kafka.name= org.apache.kafka\nlogger.kafka.level = INFO\nlogger.hadoop.name = org.apache.hadoop\nlogger.hadoop.level = INFO\nlogger.zookeeper.name = org.apache.zookeeper\nlogger.zookeeper.level = INFO\n\n# Log all infos in the given file\nappender.main.name = MainAppender\nappender.main.type = File\nappender.main.append = false\nappender.main.fileName = /var/log/ssb\nappender.main.layout.type = PatternLayout\nappender.main.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n\n\n# Suppress the irrelevant (wrong) warnings from the Netty channel handler\nlogger.netty.name = org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline\nlogger.netty.level = OFF\n"
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "job_name" : "high_score_counts",
+  "api_endpoints" : [ {
+    "endpoint" : "threat",
+    "code" : "SELECT \"ts_date\", \"ts_hour\", \"message\", \"cyberScoresDetails\", \"cyberScore\" FROM mv_ffffffff_high_score_counts",
+    "builder_data" : {
+      "rules" : {
+        "condition" : "AND",
+        "rules" : [ ]
+      },
+      "selectedColumns" : [ {
+        "index" : 1,
+        "name" : "ts_date",
+        "alias" : "ts_date",
+        "expr" : null,
+        "typeName" : "VARCHAR",
+        "watermark" : false,
+        "primaryKey" : false
+      }, {
+        "index" : 2,
+        "name" : "ts_hour",
+        "alias" : "ts_hour",
+        "expr" : null,
+        "typeName" : "BIGINT",
+        "watermark" : false,
+        "primaryKey" : false
+      }, {
+        "index" : 3,
+        "name" : "message",
+        "alias" : "message",
+        "expr" : null,
+        "typeName" : "ROW",
+        "watermark" : false,
+        "primaryKey" : false
+      }, {
+        "index" : 4,
+        "name" : "cyberScoresDetails",
+        "alias" : "cyberScoresDetails",
+        "expr" : null,
+        "typeName" : "ARRAY",
+        "watermark" : false,
+        "primaryKey" : false
+      }, {
+        "index" : 5,
+        "name" : "cyberScore",
+        "alias" : "cyberScore",
+        "expr" : null,
+        "typeName" : "DOUBLE",
+        "watermark" : false,
+        "primaryKey" : false
+      } ]
+    }
+  } ],
+  "sql" : "select substr(CAST(TO_TIMESTAMP_LTZ(`message`.`ts`, 3) as STRING), 1, 10) as ts_date, MINUTE(TO_TIMESTAMP_LTZ(`message`.`ts`, 3)) as ts_hour, `message`, `cyberScoresDetails`, `cyberScore` \nfrom `cybersec-sr`.`default_database`.`main.network.triage.output`\nwhere cyberScore > 50.0",
+  "mv_config" : {
+    "name" : "high_score_counts",
+    "retention" : 1200,
+    "min_row_retention_count" : 0,
+    "recreate" : false,
+    "key_column_name" : "message",
+    "column_indices_disabled" : false,
+    "indexed_columns" : [ ],
+    "not_indexed_columns" : [ ],
+    "api_key" : "78ed403c-5c7d-4516-b994-dea9fc6faffc",
+    "ignore_nulls" : false,
+    "require_restart" : false,
+    "batch_size" : 0,
+    "enabled" : true
+  },
+  "runtime_config" : {
+    "execution_mode" : "SESSION",
+    "parallelism" : 1,
+    "sample_interval" : 1000,
+    "sample_count" : 100,
+    "window_size" : 100,
+    "start_with_savepoint" : false,
+    "log_config" : {
+      "type" : "LOG4J_PROPERTIES",
+      "content" : "\nrootLogger.level = INFO\nrootLogger.appenderRef.file.ref = MainAppender\n#Uncomment this if you want to _only_ change Flink's logging\n#logger.flink.name = org.apache.flink\n#logger.flink.level = INFO\n\n# The following lines keep the log level of common libraries/connectors on\n# log level INFO. The root logger does not override this. You have to manually\n# change the log levels here.\nlogger.akka.name = akka\nlogger.akka.level = INFO\nlogger.kafka.name= org.apache.kafka\nlogger.kafka.level = INFO\nlogger.hadoop.name = org.apache.hadoop\nlogger.hadoop.level = INFO\nlogger.zookeeper.name = org.apache.zookeeper\nlogger.zookeeper.level = INFO\n\n# Log all infos in the given file\nappender.main.name = MainAppender\nappender.main.type = File\nappender.main.append = false\nappender.main.fileName = /var/log/ssb\nappender.main.layout.type = PatternLayout\nappender.main.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n\n\n# Suppress the irrelevant (wrong) warnings from the Netty channel handler\nlogger.netty.name = org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline\nlogger.netty.level = OFF\n"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id" : "3d8b40dc8ee8451ab0cb97b6e0e8ca3e",
+  "name" : "cybersec-sr",
+  "type" : "catalog",
+  "properties" : {
+    "table_filters" : [ ],
+    "catalog_type" : "registry",
+    "kafka.provider.id" : "edfba8dd4ba54d20baf7f9b8383a433b",
+    "registry.address" : "https://cybersec-cdp-kafka-master0.cybersec.a465-9q4k.cloudera.site:7790/api/v1"
+  },
+  "custom_truststore" : false
+}

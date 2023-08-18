@@ -1,0 +1,11 @@
+{
+  "id" : "5f563408447248eaaaf478ca4447a06c",
+  "name" : "cybersec-hive",
+  "type" : "catalog",
+  "properties" : {
+    "table_filters" : [ ],
+    "catalog_type" : "hive",
+    "default-database" : "cybersec"
+  },
+  "custom_truststore" : false
+}
